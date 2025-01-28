@@ -1,0 +1,75 @@
+name: Download NicoNico Video
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  download_video:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-pip
+          pip3 install yt-dlp
+
+      - name: Retrieve cookies
+        run: |
+          # Replace this with the actual command to retrieve cookies
+          # For example, using curl to get cookies from a website
+          curl -c cookies.txt https://www.nicovideo.jp/
+
+      - name: Create batch file
+        run: |
+          echo @echo off > download_video.bat
+          echo chcp 932 ^> nul >> download_video.bat
+          echo title すだちょろぱerBBS(仮称) >> download_video.bat
+          echo. >> download_video.bat
+          echo IDとパスワードを入力して下さい。 >> download_video.bat
+          echo ゲストは ID "O" です。 >> download_video.bat
+          echo. >> download_video.bat
+          echo set /p ID=ID: >> download_video.bat
+          echo set /p Password=Password: >> download_video.bat
+          echo. >> download_video.bat
+          echo echo login ok ...... いらっしゃいまし　～　ん >> download_video.bat
+          echo echo ------------------------------------------------------- >> download_video.bat
+          echo echo すだちょろぱ er　★　BBS (仮称) >> download_video.bat
+          echo echo HOST-program : NET-COCK 3.60 Quintet chacha Ver 1.00 >> download_video.bat
+          echo echo MODEM         : Sportster 28800 MODEM >> download_video.bat
+          echo echo MENT          : at any time >> download_video.bat
+          echo echo CAT-no.       : SCD-001 >> download_video.bat
+          echo echo ------------------------------------------------------- >> download_video.bat
+          echo echo ★　運営時間　☆ >> download_video.bat
+          echo echo 毎日24時間運営 >> download_video.bat
+          echo. >> download_video.bat
+          echo echo %ID% さんいらっしゃいませ。 >> download_video.bat
+          echo echo Last login: %%date%% %%time%% >> download_video.bat
+          echo echo Login count: 765 >> download_video.bat
+          echo. >> download_video.bat
+          echo echo チャット・モードをオンにしました。 >> download_video.bat
+          echo echo ^>BL >> download_video.bat
+          echo echo. >> download_video.bat
+          echo pause >> download_video.bat
+          echo echo NicoNico動画のVideo IDを入力してください（例: sm12345678）。 >> download_video.bat
+          echo set /p VideoID=Video ID: >> download_video.bat
+          echo echo 動画をダウンロード中... >> download_video.bat
+          echo yt-dlp "https://www.nicovideo.jp/watch/%%VideoID%%" --cookies cookies.txt -o "downloads\%%(title)s.%%(ext)s" >> download_video.bat
+          echo if %%errorlevel%% neq 0 ( >> download_video.bat
+          echo     echo ダウンロードに失敗しました。エラーコード: %%errorlevel%% >> download_video.bat
+          echo     pause >> download_video.bat
+          echo     exit /b >> download_video.bat
+          echo ) >> download_video.bat
+          echo echo ダウンロードが完了しました。ファイルは "downloads" フォルダに保存されました。 >> download_video.bat
+          echo pause >> download_video.bat
+          echo exit >> download_video.bat
+
+      - name: Run batch file
+        run: |
+          chmod +x download_video.bat
+          ./download_video.bat
